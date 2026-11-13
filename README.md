@@ -1,10 +1,10 @@
 # SIEM Detection Rules
 
-Five documented, testable detection rules for identity-focused attacks — plus a small harness that evaluates them against sample events and shows exactly which rules fire and why.
+Five documented, testable detection rules for identity-focused attacks, plus a small harness that evaluates them against sample events and shows exactly which rules fire and why.
 
 ## Why it matters
 
-Detection rules are only useful if they are documented (what they catch, how they work, why they false-positive) and testable (you can run sample data through them and prove they fire). This project packages both halves: each rule states its log source, MITRE ATT&CK mapping, plain-English detection logic, machine-readable conditions, and false-positive notes, and `src/test_rules.py` executes the conditions against sample events so the rules are verified, not just written down.
+Detection rules are only useful if they are documented (what they catch, how they work, why they false-positive) and testable (you can run sample data through them and prove they fire). This project packages both halves. Each rule states its log source, MITRE ATT&CK mapping, plain-English detection logic, machine-readable conditions, and false-positive notes, and `src/test_rules.py` executes the conditions against sample events so the rules are verified, not just written down.
 
 ## The rules
 
@@ -20,11 +20,11 @@ Each rule lives in `rules/*.json` with a consistent schema: `id`, `name`, `descr
 
 ### Why JSON instead of YAML/Sigma?
 
-Production SIEM rules are usually YAML (Sigma format). These rules are stored as **JSON in the same structure** — log source, filter conditions, aggregation, time window, level, ATT&CK tags — so they map one-to-one onto Sigma concepts (a Sigma version would put `logsource`/`detection.selection`/`condition: count() by user > 4` in place of the `filter`/`threshold` fields here). JSON is used for one pragmatic reason: it parses with the Python standard library, so the test harness runs anywhere with zero installs. Converting any rule here to Sigma YAML is a formatting exercise, not a redesign.
+Production SIEM rules are usually YAML (Sigma format). These rules are stored as **JSON in the same structure** (log source, filter conditions, aggregation, time window, level, ATT&CK tags), so they map one-to-one onto Sigma concepts (a Sigma version would put `logsource`/`detection.selection`/`condition: count() by user > 4` in place of the `filter`/`threshold` fields here). JSON is used for one pragmatic reason: it parses with the Python standard library, so the test harness runs anywhere with zero installs. Converting any rule here to Sigma YAML is a formatting exercise, not a redesign.
 
 ## How to run
 
-Python 3.9+, standard library only — nothing to install.
+Python 3.9+, standard library only. Nothing to install.
 
 ```bash
 python3 src/test_rules.py
@@ -53,9 +53,9 @@ Loaded 5 rules and 30 sample events.
 Result: 4 of 5 rules fired on the sample data.
 ```
 
-### Why DET-005 does not fire — stated honestly
+### Why DET-005 does not fire (stated honestly)
 
-DET-005 is **not** broken; the sample data deliberately contains no event of the type it detects. The only service-account events in `sample-events.json` are `svc_reports` and `svc_backup` authenticating with `logon_type` `batch` and `service` — exactly the non-interactive behavior the rule considers normal. DET-005 needs a successful login event with `logon_type: "interactive"` **and** `is_service_account: true`, and no such event exists in the sample set. Add one and the rule fires; the non-firing result demonstrates that the rule distinguishes logon types rather than alerting on every service-account use.
+DET-005 is **not** broken; the sample data deliberately contains no event of the type it detects. The only service-account events in `sample-events.json` are `svc_reports` and `svc_backup` authenticating with `logon_type` `batch` and `service`, which is exactly the non-interactive behavior the rule considers normal. DET-005 needs a successful login event with `logon_type: "interactive"` **and** `is_service_account: true`, and no such event exists in the sample set. Add one and the rule fires. The non-firing result demonstrates that the rule distinguishes logon types rather than alerting on every service-account use.
 
 ## Files
 
@@ -79,4 +79,4 @@ data/sample-events.json                             30 fictional events exercisi
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Araf Abubakar.
+MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Araf Abubakar.
